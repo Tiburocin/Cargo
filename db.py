@@ -1,6 +1,7 @@
 import psycopg2
 from psycopg2.extras import DictCursor 
 import logging as logger 
+import json
 
 class Database:
 
@@ -31,8 +32,9 @@ class Database:
         with self.con.cursor() as cur:
             cur.execute(query)
             records = [row for row in cur.fetchall()]
+            json_output = json.dumps(records)
             cur.close()
-            return records  
+            return json_output  
 
     def add(self, query, records):
         self.connect()
@@ -40,16 +42,18 @@ class Database:
             cur.execute(query,records)
             self.con.commit()
             count = cur.rowcount
+            json_output = json.dumps(count)
             cur.close()
-            return count  
+            return json_output  
 
     def getQuantity(self, query):
         self.connect()
         with self.con.cursor() as cur:
             cur.execute(query)
             self.con.commit()
-            count = cur.fethone()
+            count = cur.fetchone()
+            json_output = json.dumps(count)
             cur.close()
-            return count
+            return json_output
 
 
