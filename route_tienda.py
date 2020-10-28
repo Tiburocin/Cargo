@@ -10,7 +10,6 @@ bd = Database()
 class Tienda(Resource):
 
     #Seleccion de todas las filas
-    @api.route()
     def get(self):
         res = bd.selectRows("select * from tienda")
         return Response(res, mimetype="application/json", status=200)
@@ -18,10 +17,17 @@ class Tienda(Resource):
     #Añade registro
     @api.expect(Tienda_Model.a_tienda)
     def post(self):
-        json_data = request.json
-        name = json_data["name"]
-        direccion = json_data["direccion"]
-        telefono = json_data["telefono"]
+
+        #Form request
+        name = request.form['name']
+        direccion = request.form['direccion']
+        telefono = request.form['telefono']
+
+        #Json request
+        # json_data = request.json
+        # name = json_data["name"]
+        # direccion = json_data["direccion"]
+        # telefono = json_data["telefono"]
 
         insert_query = "INSERT INTO shop (name, direccion, telefono) VALUES (%s,%s,%s)"
         record = (name, direccion, telefono)
