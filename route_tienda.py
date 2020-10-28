@@ -1,4 +1,4 @@
-from flask import request
+from flask import request, Response
 from flask_restplus import Namespace, Resource, fields
 from model_tienda import Tienda_Model
 from db import Database
@@ -9,10 +9,13 @@ bd = Database()
 
 class Tienda(Resource):
 
-    @api.marshal_with(Tienda_Model.a_tienda, envelope='resource')
+    #Seleccion de todas las filas
+    @api.route()
     def get(self):
-        return bd.selectRows("select * from tienda")
+        res = bd.selectRows("select * from tienda")
+        return Response(res, mimetype="application/json", status=200)
 
+    #Añade registro
     @api.expect(Tienda_Model.a_tienda)
     def post(self):
         json_data = request.json
@@ -22,15 +25,12 @@ class Tienda(Resource):
 
         insert_query = "INSERT INTO shop (name, direccion, telefono) VALUES (%s,%s,%s)"
         record = (name, direccion, telefono)
-        return bd.add(insert_query,record)
+        res = bd.add(insert_query,record)
+        return Response(res, mimetype="application/json", status=200)
 
+#Busqueda por ID
 class TiendaById(Resource):
 
     def get(self,id):
-        return bd.selectRows("select * from tienda where id_tienda = {}".format(id))
-
-    def put(self,id):
-        return {'result' : 'Tienda Id'}, 201
-
-    def delete(self,id):
-        return {'result' : 'Tienda Id'}, 201
+        res = bd.selectRows("select * from tienda where id_tienda = {}".format(id))
+        return Response(res, mimetype="application/json", status=200)
